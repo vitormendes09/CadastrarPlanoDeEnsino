@@ -1,5 +1,35 @@
 {
   "dependencies": {
+    "express": "^4.21.2",
     "node": "^23.7.0"
+  },
+  "name": "cadastrarplanodeensino",
+  "version": "1.0.0",
+  "main": "src/server.ts",
+  "scripts": {
+    "dev": "ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vitormendes09/CadastrarPlanoDeEnsino.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/vitormendes09/CadastrarPlanoDeEnsino/issues"
+  },
+  "homepage": "https://github.com/vitormendes09/CadastrarPlanoDeEnsino#readme",
+  "description": "",
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.12.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.7.3"
   }
 }
