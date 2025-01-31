@@ -1,11 +1,11 @@
 import { IUseCase } from '../../contracts/iusecase';
 
 // Definindo a entrada e saída do caso de uso
-interface ConsultaGradeCurricularEntrada {
+export interface ConsultaGradeCurricularEntrada {
     cursoId: string;
 }
 
-interface ConsultaGradeCurricularSaida {
+export interface ConsultaGradeCurricularSaida {
     cursoId: string;
     nomeCurso: string;
     disciplinas: string[];
@@ -39,7 +39,7 @@ export class ConsultaGradeCurricularUseCase implements IUseCase<ConsultaGradeCur
         }
 
         // Regra de negócio: Retornar a grade curricular do curso
-        
+
         return {
             cursoId: curso.cursoId,
             nomeCurso: curso.nomeCurso,
