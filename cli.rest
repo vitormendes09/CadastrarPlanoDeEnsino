@@ -1,0 +1,15 @@
+### Teste da rota de verificação
+GET http://localhost:3000/vivo
+Content-Type: application/json
+
+###
+
+### Teste da rota de consulta da grade curricular
+GET http://localhost:3000/curriculo/1
+Content-Type: application/json
+
+###
+
+### Teste da rota de consulta da grade curricular com curso não existente
+GET http://localhost:3000/curriculo/999
+Content-Type: application/json
