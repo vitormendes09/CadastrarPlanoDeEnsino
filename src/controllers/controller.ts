@@ -10,20 +10,26 @@ export class ConsultaGradeCurricularController implements IController {
     uc: IUseCase<ConsultaGradeCurricularEntrada, ConsultaGradeCurricularSaida>;
 
     constructor(uc: IUseCase<ConsultaGradeCurricularEntrada, ConsultaGradeCurricularSaida>) {
-        console.log('ConsultaGradeCurricularController instanciado');
+        if (process.env.NODE_ENV !== 'test') {
+            console.log('ConsultaGradeCurricularController instanciado');
+        }
         this.uc = uc;
     }
 
     public async handle(req: Request, resp: Response): Promise<void> {
         const { cursoId } = req.params;
 
-        console.log('ConsultaGradeCurricularController.handle() chamado', cursoId);
+        if (process.env.NODE_ENV !== 'test') {
+            console.log('ConsultaGradeCurricularController.handle() chamado', cursoId);
+        }
         const dto_usecase: ConsultaGradeCurricularEntrada = {
             cursoId: cursoId as string,
         };
         try {
             const resposta: ConsultaGradeCurricularSaida = await this.uc.perform(dto_usecase);
-            console.log('Resposta UseCase', resposta);
+            if (process.env.NODE_ENV !== 'test') {
+                console.log('Resposta UseCase', resposta);
+            }
 
             const minha_resposta = {
                 mensagem: 'Consulta realizada com sucesso',
