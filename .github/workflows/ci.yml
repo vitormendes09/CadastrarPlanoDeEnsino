@@ -1,29 +1,37 @@
-name: CI
+name: CI for NestJS Application
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      # Checkout do código
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16'
+      # Configuração do Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
 
-    - name: Install dependencies
-      run: npm install
+      # Instalação de dependências
+      - name: Install dependencies
+        run: npm install
 
-    - name: Grant Jest permissions
-      run: chmod +x ./node_modules/.bin/jest
+      # Rodando os testes
+      - name: Run tests
+        run: npm test
 
-    - name: Run tests
-      run: npm test
+      # Verificando se a aplicação está compilando
+      - name: Build application
+        run: npm run build
