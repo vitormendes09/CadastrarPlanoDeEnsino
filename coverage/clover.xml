@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1738588213851" clover="3.2.0">
-  <project timestamp="1738588213851" name="All files">
+<coverage generated="1738621883560" clover="3.2.0">
+  <project timestamp="1738621883560" name="All files">
     <metrics statements="17" coveredstatements="14" conditionals="3" coveredconditionals="0" methods="2" coveredmethods="2" elements="22" coveredelements="16" complexity="0" loc="17" ncloc="17" packages="1" files="1" classes="1"/>
     <file name="controller.ts" path="C:\Users\mende\FaculdadeAtualizado\TestesAutomatizados\CadastrarPlanoDeEnsino\src\controllers\controller.ts">
       <metrics statements="17" coveredstatements="14" conditionals="3" coveredconditionals="0" methods="2" coveredmethods="2"/>
