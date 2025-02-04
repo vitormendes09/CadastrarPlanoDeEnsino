@@ -5,16 +5,42 @@ import { Request, Response } from "express";
 
 class UseCaseFake implements IUseCase<ConsultaGradeCurricularEntrada, ConsultaGradeCurricularSaida> {
     chamado: boolean = false;
-    async perform(entrada: ConsultaGradeCurricularEntrada): Promise<ConsultaGradeCurricularSaida> {
+    opcao: string;
+    constructor(opcao: string) {
+        this.opcao = opcao;
+    }
+    async perform(entrada: ConsultaGradeCurricularEntrada): Promise<any> {
         this.chamado = true;
-        if (entrada.cursoId === '1') {
+        if (this.opcao === "certo") {
             return {
                 cursoId: '1',
                 nomeCurso: 'Engenharia de Software',
                 disciplinas: ['Algoritmos', 'Estruturas de Dados', 'Banco de Dados']
             };
-        } else {
+        } else if (this.opcao === "cursoNaoEncontrado") {
             throw new Error('Curso não encontrado');
+        } else if (this.opcao === "cursoInativo") {
+            throw new Error('Curso inativo');
+        } else if (this.opcao === "semDisciplinas") {
+            return {
+                cursoId: '1',
+                nomeCurso: 'Engenharia de Software',
+                disciplinas: []
+            };
+        } else if (this.opcao === "semDisciplinaObrigatoria") {
+            return {
+                cursoId: '1',
+                nomeCurso: 'Engenharia de Software',
+                disciplinas: ['Estruturas de Dados', 'Banco de Dados']
+            };
+        } else if (this.opcao === "nomeInvalido") {
+            return {
+                cursoId: '1',
+                nomeCurso: '',
+                disciplinas: ['Algoritmos', 'Estruturas de Dados', 'Banco de Dados']
+            };
+        } else {
+            throw new Error('Erro inesperado');
         }
     }
 }
@@ -40,14 +66,14 @@ class ResponseFake {
     }
 }
 
-function makeSUT() {
+function makeSUT(cursoId: any, opcao: string) {
     const requestStub = {
         params: {
-            cursoId: '1',
+            cursoId: cursoId,
         },
     } as any as Request;
     const responseFake = new ResponseFake();
-    const uc = new UseCaseFake();
+    const uc = new UseCaseFake(opcao);
     const controller = new ConsultaGradeCurricularController(uc);
     return { uc, controller, requestStub, responseFake };
 }
@@ -55,15 +81,15 @@ function makeSUT() {
 describe('ConsultaGradeCurricularController', () => {
     
     it('deve instanciar ConsultaGradeCurricularController', () => {
-        let { controller } = makeSUT();
+        let { controller } = makeSUT('1', "certo");
         expect(controller).toBeDefined();
     });
 
     it('deve chamar handle com sucesso', async () => {
-        let { uc, controller, requestStub, responseFake } = makeSUT();
+        let { controller, requestStub, responseFake } = makeSUT('1', "certo");
         await controller.handle(requestStub, responseFake as any as Response);
-        
-        expect(uc.chamado).toBe(true);
+
+        expect(responseFake.endChamado).toBe(true);
         expect(responseFake.statusCodeInformado).toBe(200);
         expect(responseFake.jsonInformado.mensagem).toBe('Consulta realizada com sucesso');
         expect(responseFake.jsonInformado.cursoId).toBe('1');
@@ -72,24 +98,93 @@ describe('ConsultaGradeCurricularController', () => {
     });
 
     it('deve retornar erro quando o curso não for encontrado', async () => {
-        let { uc, controller, requestStub, responseFake } = makeSUT();
-        requestStub.params.cursoId = '999';
+        let { controller, requestStub, responseFake } = makeSUT('999', "cursoNaoEncontrado");
         await controller.handle(requestStub, responseFake as any as Response);
-        
-        expect(uc.chamado).toBe(true);
+
+        expect(responseFake.endChamado).toBe(true);
         expect(responseFake.statusCodeInformado).toBe(400);
         expect(responseFake.jsonInformado.mensagem).toBe('Erro ao consultar grade curricular');
         expect(responseFake.jsonInformado.erro).toBe('Curso não encontrado');
     });
 
-    it('deve retornar erro quando o cursoId não for fornecido', async () => {
-        let { uc, controller, requestStub, responseFake } = makeSUT();
-        requestStub.params.cursoId = '';
+    it('deve retornar erro quando o curso estiver inativo', async () => {
+        let { controller, requestStub, responseFake } = makeSUT('2', "cursoInativo");
         await controller.handle(requestStub, responseFake as any as Response);
-        
-        expect(uc.chamado).toBe(true);
+
+        expect(responseFake.endChamado).toBe(true);
         expect(responseFake.statusCodeInformado).toBe(400);
         expect(responseFake.jsonInformado.mensagem).toBe('Erro ao consultar grade curricular');
-        expect(responseFake.jsonInformado.erro).toBe('Curso não encontrado');
+        expect(responseFake.jsonInformado.erro).toBe('Curso inativo');
+    });
+
+    it('deve retornar erro quando o curso não tiver disciplinas cadastradas', async () => {
+        let { controller, requestStub, responseFake } = makeSUT('1', "semDisciplinas");
+        await controller.handle(requestStub, responseFake as any as Response);
+
+        expect(responseFake.endChamado).toBe(true);
+        expect(responseFake.statusCodeInformado).toBe(400);
+        expect(responseFake.jsonInformado.mensagem).toBe('Erro ao consultar grade curricular');
+        expect(responseFake.jsonInformado.erro).toBe('Curso sem disciplinas cadastradas');
+    });
+
+    it('deve retornar erro quando o curso não tiver disciplinas obrigatórias', async () => {
+        let { controller, requestStub, responseFake } = makeSUT('1', "semDisciplinaObrigatoria");
+        await controller.handle(requestStub, responseFake as any as Response);
+
+        expect(responseFake.endChamado).toBe(true);
+        expect(responseFake.statusCodeInformado).toBe(400);
+        expect(responseFake.jsonInformado.mensagem).toBe('Erro ao consultar grade curricular');
+        expect(responseFake.jsonInformado.erro).toBe('Curso sem disciplinas obrigatórias');
+    });
+
+    it('deve retornar erro quando o curso tiver nome inválido', async () => {
+        let { controller, requestStub, responseFake } = makeSUT('1', "nomeInvalido");
+        await controller.handle(requestStub, responseFake as any as Response);
+
+        expect(responseFake.endChamado).toBe(true);
+        expect(responseFake.statusCodeInformado).toBe(400);
+        expect(responseFake.jsonInformado.mensagem).toBe('Erro ao consultar grade curricular');
+        expect(responseFake.jsonInformado.erro).toBe('Curso com nome inválido');
+    });
+
+    it('deve retornar erro inesperado', async () => {
+        let { controller, requestStub, responseFake } = makeSUT('1', "erroInesperado");
+        await controller.handle(requestStub, responseFake as any as Response);
+
+        expect(responseFake.endChamado).toBe(true);
+        expect(responseFake.statusCodeInformado).toBe(400);
+        expect(responseFake.jsonInformado.mensagem).toBe('Erro ao consultar grade curricular');
+        expect(responseFake.jsonInformado.erro).toBe('Erro inesperado');
+    });
+
+    it('deve logar a instância do controlador quando não estiver em ambiente de teste', () => {
+        process.env.NODE_ENV = 'development';
+        const consoleSpy = jest.spyOn(console, 'log');
+        let { controller } = makeSUT('1', "certo");
+        expect(controller).toBeDefined();
+        expect(consoleSpy).toHaveBeenCalledWith('ConsultaGradeCurricularController instanciado');
+        process.env.NODE_ENV = 'test';
+    });
+
+    it('deve logar a chamada do handle quando não estiver em ambiente de teste', async () => {
+        process.env.NODE_ENV = 'development';
+        const consoleSpy = jest.spyOn(console, 'log');
+        let { controller, requestStub, responseFake } = makeSUT('1', "certo");
+        await controller.handle(requestStub, responseFake as any as Response);
+        expect(consoleSpy).toHaveBeenCalledWith('ConsultaGradeCurricularController.handle() chamado', '1');
+        process.env.NODE_ENV = 'test';
+    });
+
+    it('deve logar a resposta do use case quando não estiver em ambiente de teste', async () => {
+        process.env.NODE_ENV = 'development';
+        const consoleSpy = jest.spyOn(console, 'log');
+        let { controller, requestStub, responseFake } = makeSUT('1', "certo");
+        await controller.handle(requestStub, responseFake as any as Response);
+        expect(consoleSpy).toHaveBeenCalledWith('Resposta UseCase', {
+            cursoId: '1',
+            nomeCurso: 'Engenharia de Software',
+            disciplinas: ['Algoritmos', 'Estruturas de Dados', 'Banco de Dados']
+        });
+        process.env.NODE_ENV = 'test';
     });
 });
