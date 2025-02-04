@@ -1,26 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1738690757975" clover="3.2.0">
-  <project timestamp="1738690757975" name="All files">
-    <metrics statements="17" coveredstatements="17" conditionals="3" coveredconditionals="3" methods="2" coveredmethods="2" elements="22" coveredelements="22" complexity="0" loc="17" ncloc="17" packages="1" files="1" classes="1"/>
-    <file name="controller.ts" path="C:\Users\mende\FaculdadeAtualizado\TestesAutomatizados\CadastrarPlanoDeEnsino\src\controllers\controller.ts">
+<coverage generated="1738691199094" clover="3.2.0">
+  <project timestamp="1738691199095" name="All files">
+    <metrics statements="35" coveredstatements="34" conditionals="10" coveredconditionals="9" methods="7" coveredmethods="7" elements="52" coveredelements="50" complexity="0" loc="35" ncloc="35" packages="2" files="2" classes="2"/>
+    <package name="controllers">
       <metrics statements="17" coveredstatements="17" conditionals="3" coveredconditionals="3" methods="2" coveredmethods="2"/>
-      <line num="9" count="1" type="stmt"/>
-      <line num="13" count="11" type="cond" truecount="1" falsecount="0"/>
-      <line num="14" count="3" type="stmt"/>
-      <line num="16" count="11" type="stmt"/>
-      <line num="20" count="9" type="stmt"/>
-      <line num="22" count="9" type="cond" truecount="1" falsecount="0"/>
-      <line num="23" count="2" type="stmt"/>
-      <line num="25" count="9" type="stmt"/>
-      <line num="28" count="9" type="stmt"/>
-      <line num="29" count="9" type="stmt"/>
-      <line num="30" count="6" type="cond" truecount="1" falsecount="0"/>
-      <line num="31" count="2" type="stmt"/>
-      <line num="34" count="6" type="stmt"/>
-      <line num="40" count="6" type="stmt"/>
-      <line num="42" count="3" type="stmt"/>
-      <line num="43" count="3" type="stmt"/>
-      <line num="44" count="3" type="stmt"/>
-    </file>
+      <file name="controller.ts" path="C:\Users\mende\FaculdadeAtualizado\TestesAutomatizados\CadastrarPlanoDeEnsino\src\controllers\controller.ts">
+        <metrics statements="17" coveredstatements="17" conditionals="3" coveredconditionals="3" methods="2" coveredmethods="2"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="13" count="11" type="cond" truecount="1" falsecount="0"/>
+        <line num="14" count="3" type="stmt"/>
+        <line num="16" count="11" type="stmt"/>
+        <line num="20" count="9" type="stmt"/>
+        <line num="22" count="9" type="cond" truecount="1" falsecount="0"/>
+        <line num="23" count="2" type="stmt"/>
+        <line num="25" count="9" type="stmt"/>
+        <line num="28" count="9" type="stmt"/>
+        <line num="29" count="9" type="stmt"/>
+        <line num="30" count="6" type="cond" truecount="1" falsecount="0"/>
+        <line num="31" count="2" type="stmt"/>
+        <line num="34" count="6" type="stmt"/>
+        <line num="40" count="6" type="stmt"/>
+        <line num="42" count="3" type="stmt"/>
+        <line num="43" count="3" type="stmt"/>
+        <line num="44" count="3" type="stmt"/>
+      </file>
+    </package>
+    <package name="domain.usecases">
+      <metrics statements="18" coveredstatements="17" conditionals="7" coveredconditionals="6" methods="5" coveredmethods="5"/>
+      <file name="usecase.ts" path="C:\Users\mende\FaculdadeAtualizado\TestesAutomatizados\CadastrarPlanoDeEnsino\src\domain\usecases\usecase.ts">
+        <metrics statements="18" coveredstatements="17" conditionals="7" coveredconditionals="6" methods="5" coveredmethods="5"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="17" count="8" type="stmt"/>
+        <line num="34" count="14" type="stmt"/>
+        <line num="35" count="6" type="cond" truecount="1" falsecount="0"/>
+        <line num="36" count="1" type="stmt"/>
+        <line num="40" count="5" type="stmt"/>
+        <line num="41" count="5" type="cond" truecount="1" falsecount="0"/>
+        <line num="42" count="2" type="stmt"/>
+        <line num="46" count="3" type="cond" truecount="1" falsecount="0"/>
+        <line num="47" count="1" type="stmt"/>
+        <line num="51" count="2" type="stmt"/>
+        <line num="52" count="2" type="cond" truecount="0" falsecount="1"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="57" count="2" type="cond" truecount="3" falsecount="0"/>
+        <line num="58" count="1" type="stmt"/>
+        <line num="62" count="1" type="stmt"/>
+        <line num="72" count="7" type="stmt"/>
+        <line num="78" count="4" type="stmt"/>
+      </file>
+    </package>
   </project>
 </coverage>
