@@ -14,31 +14,17 @@ class UseCaseFake implements IUseCase<ConsultaGradeCurricularEntrada, ConsultaGr
         if (this.opcao === "certo") {
             return {
                 cursoId: '1',
-                nomeCurso: 'Engenharia de Software',
+                nomeCurso: 'Bacharelado de Sistemas de Informação',
                 disciplinas: ['Algoritmos', 'Estruturas de Dados', 'Banco de Dados']
             };
         } else if (this.opcao === "cursoNaoEncontrado") {
             throw new Error('Curso não encontrado');
-        } else if (this.opcao === "cursoInativo") {
-            throw new Error('Curso inativo');
         } else if (this.opcao === "semDisciplinas") {
-            return {
-                cursoId: '1',
-                nomeCurso: 'Engenharia de Software',
-                disciplinas: []
-            };
+            throw new Error('Curso sem disciplinas cadastradas');
         } else if (this.opcao === "semDisciplinaObrigatoria") {
-            return {
-                cursoId: '1',
-                nomeCurso: 'Engenharia de Software',
-                disciplinas: ['Estruturas de Dados', 'Banco de Dados']
-            };
+            throw new Error('Curso sem disciplinas obrigatórias');
         } else if (this.opcao === "nomeInvalido") {
-            return {
-                cursoId: '1',
-                nomeCurso: '',
-                disciplinas: ['Algoritmos', 'Estruturas de Dados', 'Banco de Dados']
-            };
+            throw new Error('Curso com nome inválido');
         } else {
             throw new Error('Erro inesperado');
         }
@@ -93,7 +79,7 @@ describe('ConsultaGradeCurricularController', () => {
         expect(responseFake.statusCodeInformado).toBe(200);
         expect(responseFake.jsonInformado.mensagem).toBe('Consulta realizada com sucesso');
         expect(responseFake.jsonInformado.cursoId).toBe('1');
-        expect(responseFake.jsonInformado.nomeCurso).toBe('Engenharia de Software');
+        expect(responseFake.jsonInformado.nomeCurso).toBe('Bacharelado de Sistemas de Informação');
         expect(responseFake.jsonInformado.disciplinas).toEqual(['Algoritmos', 'Estruturas de Dados', 'Banco de Dados']);
     });
 
@@ -107,15 +93,15 @@ describe('ConsultaGradeCurricularController', () => {
         expect(responseFake.jsonInformado.erro).toBe('Curso não encontrado');
     });
 
-    it('deve retornar erro quando o curso estiver inativo', async () => {
-        let { controller, requestStub, responseFake } = makeSUT('2', "cursoInativo");
-        await controller.handle(requestStub, responseFake as any as Response);
+    //it('deve retornar erro quando o curso estiver inativo', async () => {
+    //    let { controller, requestStub, responseFake } = makeSUT('2', "cursoInativo");
+    //    await controller.handle(requestStub, responseFake as any as Response);
 
-        expect(responseFake.endChamado).toBe(true);
-        expect(responseFake.statusCodeInformado).toBe(400);
-        expect(responseFake.jsonInformado.mensagem).toBe('Erro ao consultar grade curricular');
-        expect(responseFake.jsonInformado.erro).toBe('Curso inativo');
-    });
+    //    expect(responseFake.endChamado).toBe(true);
+    //    expect(responseFake.statusCodeInformado).toBe(400);
+    //    expect(responseFake.jsonInformado.mensagem).toBe('Erro ao consultar grade curricular');
+    //    expect(responseFake.jsonInformado.erro).toBe('Curso inativo');
+    //});
 
     it('deve retornar erro quando o curso não tiver disciplinas cadastradas', async () => {
         let { controller, requestStub, responseFake } = makeSUT('1', "semDisciplinas");
@@ -182,7 +168,7 @@ describe('ConsultaGradeCurricularController', () => {
         await controller.handle(requestStub, responseFake as any as Response);
         expect(consoleSpy).toHaveBeenCalledWith('Resposta UseCase', {
             cursoId: '1',
-            nomeCurso: 'Engenharia de Software',
+            nomeCurso: 'Bacharelado de Sistemas de Informação',
             disciplinas: ['Algoritmos', 'Estruturas de Dados', 'Banco de Dados']
         });
         process.env.NODE_ENV = 'test';

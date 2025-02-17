@@ -13,7 +13,7 @@ describe('ConsultaGradeCurricularUseCase', () => {
 
         expect(saida).toEqual({
             cursoId: '1',
-            nomeCurso: 'Engenharia de Software',
+            nomeCurso: 'Bacharelado de Sistemas de Informação',
             disciplinas: ['Algoritmos', 'Estruturas de Dados', 'Banco de Dados']
         });
     });
@@ -24,11 +24,12 @@ describe('ConsultaGradeCurricularUseCase', () => {
         await expect(useCase.perform(entrada)).rejects.toThrow('Curso não encontrado');
     });
 
-    it('deve lançar erro quando o curso estiver inativo', async () => {
-        const entrada: ConsultaGradeCurricularEntrada = { cursoId: '2' };
+    // Comentando o teste de curso inativo, pois a funcionalidade foi removida
+    // it('deve lançar erro quando o curso estiver inativo', async () => {
+    //     const entrada: ConsultaGradeCurricularEntrada = { cursoId: '2' };
 
-        await expect(useCase.perform(entrada)).rejects.toThrow('Curso inativo');
-    });
+    //     await expect(useCase.perform(entrada)).rejects.toThrow('Curso inativo');
+    // });
 
     it('deve lançar erro quando o curso não tiver disciplinas cadastradas', async () => {
         useCase['cursos'].push({
@@ -61,11 +62,6 @@ describe('ConsultaGradeCurricularUseCase', () => {
         const entrada: ConsultaGradeCurricularEntrada = { cursoId: '5' };
 
         await expect(useCase.perform(entrada)).rejects.toThrow('Curso com nome inválido');
-    });
-
-    it('deve verificar se o curso está ativo corretamente', () => {
-        expect(useCase['verificarCursoAtivo']('1')).toBe(true);
-        expect(useCase['verificarCursoAtivo']('2')).toBe(false);
     });
 
     it('deve verificar se o curso tem disciplinas obrigatórias corretamente', () => {
