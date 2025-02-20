@@ -10,38 +10,68 @@ export class ConsultaGradeCurricularController implements IController {
     uc: IUseCase<ConsultaGradeCurricularEntrada, ConsultaGradeCurricularSaida>;
 
     constructor(uc: IUseCase<ConsultaGradeCurricularEntrada, ConsultaGradeCurricularSaida>) {
-        if (process.env.NODE_ENV !== 'test') {
-            console.log('ConsultaGradeCurricularController instanciado');
-        }
+        console.log('ConsultarGradeCurricularController instanciado');
         this.uc = uc;
     }
 
     public async handle(req: Request, resp: Response): Promise<void> {
-        const { cursoId } = req.params;
 
-        if (process.env.NODE_ENV !== 'test') {
-            console.log('ConsultaGradeCurricularController.handle() chamado', cursoId);
+        const resultadoValidadaoEntrada = this.validarEntrada(req);
+
+        if(resultadoValidadaoEntrada){
+            resp.status(400).json({error: resultadoValidadaoEntrada});
+        } else {
+            try {
+                const {cursoId} = req.params;
+
+                const dto_usecase: ConsultaGradeCurricularEntrada = {
+                    cursoId: parseInt(cursoId as string)
+                };
+
+                const resposta: ConsultaGradeCurricularSaida = await this.uc.perform(dto_usecase);
+               
+
+                if(this.validarSaida(resposta)){
+                    resp.status(500).json({error: 'Retorno do use case não é um id'});
+
+                } else {
+                    const minha_resposta = {
+                        mensagem: 'ConsultarGradeCurricularController.metodoBasico() chamado', 
+                        
+                    };
+
+                    resp.status(200).json(resposta).end();
+                }
+            } catch(error: any) {
+                resp.status(500).json({ error: error.message});
+            }
         }
-        const dto_usecase: ConsultaGradeCurricularEntrada = {
-            cursoId: cursoId as string,
-        };
-        try {
-            const resposta: ConsultaGradeCurricularSaida = await this.uc.perform(dto_usecase);
-            if (process.env.NODE_ENV !== 'test') {
-                console.log('Resposta UseCase', resposta);
+    }
+
+    private validarEntrada(req: Request): string | null {
+        const {cursoId} = req.params;
+
+            if(!cursoId){
+                return "Id é obrigatório";
+            }
+            if( isNaN(Number(cursoId))) {
+                return "Id precisa ser um número"
+            }
+            if(Number(cursoId) < 0){
+                return "Id precisa ser positivo"
+            }
+            if(Number(cursoId) % 1 !== 0){
+                return "Id precisa ser um número inteiro"
             }
 
-            const minha_resposta = {
-                mensagem: 'Consulta realizada com sucesso',
-                cursoId: resposta.cursoId,
-                nomeCurso: resposta.nomeCurso,
-                disciplinas: resposta.disciplinas,
-            };
-            resp.status(200).json(minha_resposta).end();
-        } catch (error) {
-            console.error('Erro ao consultar grade curricular', error);
-            const errorMessage = (error as Error).message;
-            resp.status(400).json({ mensagem: 'Erro ao consultar grade curricular', erro: errorMessage }).end();
+            return null;
+    }
+
+    private validarSaida(resposta: ConsultaGradeCurricularSaida): boolean {
+        if (isNaN(Number(resposta.cursoId)) || !Array.isArray(resposta.disciplinas)) {
+            return true;
         }
+        
+        return false;
     }
 }

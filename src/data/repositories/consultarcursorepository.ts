@@ -1,6 +1,6 @@
 import { IRepositoryFind } from "../../contracts/irepository"
 import { IBancoDeDados } from "../../data/dataBase/bancodedados"
-import { ICurso } from "../../domain/entities/entitiesCurso"
+import { ICurso } from "../../domain/entities/ICurso"
 
 export class ConsultarCursoRepostory implements IRepositoryFind<ICurso> {
 
@@ -30,7 +30,7 @@ export class ConsultarCursoRepostory implements IRepositoryFind<ICurso> {
     findById(id: string): Promise<ICurso | undefined> {
         let result = this.bd.query("SELECT * FROM curso where id =$id;", null)
 
-        try {
+      
             if (!result) {
                 return Promise.resolve(undefined);
             }
@@ -41,10 +41,7 @@ export class ConsultarCursoRepostory implements IRepositoryFind<ICurso> {
 
             return Promise.resolve(result.shift() as unknown as ICurso)
 
-        } catch (e) {
-            return Promise.resolve(undefined);
-        }
-
+        
     }
 
 }

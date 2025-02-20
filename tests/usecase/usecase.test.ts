@@ -1,71 +1,104 @@
-import { ConsultaGradeCurricularUseCase, ConsultaGradeCurricularEntrada, ConsultaGradeCurricularSaida } from "../../src/domain/usecases/usecase";
+import { IRepositoryFind } from "../../src/contracts/irepository";
+import { ICurso } from "../../src/domain/entities/ICurso";
+import { ConsultaGradeCurricularUseCase, ConsultaGradeCurricularEntrada} from "../../src/domain/usecases/usecase";
 
-describe('ConsultaGradeCurricularUseCase', () => {
-    let useCase: ConsultaGradeCurricularUseCase;
+class RepositoryFake implements IRepositoryFind<ICurso>{
+    private opcao: string;
+    constructor(opcao: string){
+        this.opcao = opcao;
+    }
 
-    beforeEach(() => {
-        useCase = new ConsultaGradeCurricularUseCase();
+    findAll(): Promise<ICurso[]> {
+        throw new Error("Method not Implemented")
+    }
+
+    findById(id: string): Promise<ICurso | undefined> {
+        if(this.opcao =='certo'){
+            return Promise.resolve({
+                cursoId: Number(id),
+                nomeCurso: 'Bacharelado de Sistemas de Informação',
+                disciplinas: ['Algoritmos', 'Estruturas de Dados', 'Banco de Dados', 'Engenharia de Software', 'Redes de Computadores']
+            } as unknown as ICurso);
+        
+        } if (this.opcao ==='falta disciplina'){
+            return Promise.resolve({
+                cursoId: Number(id),
+                nomeCurso: 'Bacharelado de Sistemas de Informação',
+                disciplinas: ['Algoritmos', 'Estruturas de Dados', 'Banco de Dados', 'Engenharia de Software', 'Redes de Computadores']
+            }as unknown as ICurso);
+        } if(this.opcao === 'falta curso') {
+            return Promise.resolve(undefined);
+        }if(this.opcao === 'erro'){
+            throw new Error('Erro no repositório');
+        }else {
+            return Promise.resolve(undefined);
+        }
+    }
+}
+
+
+function makeSUT(opcao: string) {
+    const repo = new RepositoryFake(opcao);
+    const uc = new ConsultaGradeCurricularUseCase(repo);
+    return { repo, uc };
+}
+
+describe('ConsultarCronogramaUseCase', () => {
+    
+    it('deve instanciar ConsultarCronogramaUseCase', () => {
+        let { repo, uc } = makeSUT('1');
+        expect(uc).toBeDefined();
     });
 
-    it('deve retornar a grade curricular do curso com sucesso', async () => {
-        const entrada: ConsultaGradeCurricularEntrada = { cursoId: '1' };
-        const saida: ConsultaGradeCurricularSaida = await useCase.perform(entrada);
+    it('deve chamar perform', async () => {
+        let { repo, uc } = makeSUT('certo');
+        const entrada: ConsultaGradeCurricularEntrada = {cursoId: 1}
+        const saida = await uc.perform(entrada);
 
-        expect(saida).toEqual({
-            cursoId: '1',
-            nomeCurso: 'Bacharelado de Sistemas de Informação',
-            disciplinas: ['Algoritmos', 'Estruturas de Dados', 'Banco de Dados']
-        });
+        expect(saida.cursoId).toBe(1);
+        expect(saida.disciplinas[0]).toBe("Algoritmos");
+        expect(saida.nomeCurso).toBe("Bacharelado de Sistemas de Informação");
+        
     });
 
-    it('deve lançar erro quando o curso não for encontrado', async () => {
-        const entrada: ConsultaGradeCurricularEntrada = { cursoId: '999' };
 
-        await expect(useCase.perform(entrada)).rejects.toThrow('Curso não encontrado');
+    it('deve retornar erro caso repositório não retorne o disciplina', async () => {
+        let { repo, uc } = makeSUT('falta curso');
+        const entrada: ConsultaGradeCurricularEntrada = {cursoId: 1}
+        let erro: any;
+        try{
+            const saida = await uc.perform(entrada);
+        }catch(e: any){
+            erro = e;
+        }
+        expect(erro.message).toBe("Curso não encontrado");
+        
     });
 
-    // Comentando o teste de curso inativo, pois a funcionalidade foi removida
-    // it('deve lançar erro quando o curso estiver inativo', async () => {
-    //     const entrada: ConsultaGradeCurricularEntrada = { cursoId: '2' };
-
-    //     await expect(useCase.perform(entrada)).rejects.toThrow('Curso inativo');
-    // });
-
-    it('deve lançar erro quando o curso não tiver disciplinas cadastradas', async () => {
-        useCase['cursos'].push({
-            cursoId: '3',
-            nomeCurso: 'Curso Sem Disciplinas',
-            disciplinas: []
-        });
-        const entrada: ConsultaGradeCurricularEntrada = { cursoId: '3' };
-
-        await expect(useCase.perform(entrada)).rejects.toThrow('Curso sem disciplinas cadastradas');
+    it('deve retornar erro caso o id seja maior que 49', async () => {
+        let { repo, uc } = makeSUT('certo');
+        const entrada: ConsultaGradeCurricularEntrada = {cursoId: 51}
+        let erro: any;
+        try{
+            const saida = await uc.perform(entrada);
+        }catch(e: any){
+            erro = e;
+        }
+        expect(erro.message).toBe("O id do curso não pode ser maior que 50");
+        
     });
 
-    it('deve lançar erro quando o curso não tiver disciplinas obrigatórias', async () => {
-        useCase['cursos'].push({
-            cursoId: '4',
-            nomeCurso: 'Curso Sem Disciplinas Obrigatórias',
-            disciplinas: ['Estruturas de Dados', 'Banco de Dados']
-        });
-        const entrada: ConsultaGradeCurricularEntrada = { cursoId: '4' };
-
-        await expect(useCase.perform(entrada)).rejects.toThrow('Curso sem disciplinas obrigatórias');
+    it('deve retornar erro caso ocorra algum erro no repositório', async () => {
+        let { repo, uc } = makeSUT('erro');
+        const entrada: ConsultaGradeCurricularEntrada = {cursoId: 50}
+        let erro: any;
+        try{
+            const saida = await uc.perform(entrada);
+        }catch(e: any){
+            erro = e;
+        }
+        expect(erro.message).toBe("Erro no repositório");
+        
     });
 
-    it('deve lançar erro quando o curso tiver nome inválido', async () => {
-        useCase['cursos'].push({
-            cursoId: '5',
-            nomeCurso: '',
-            disciplinas: ['Algoritmos', 'Estruturas de Dados', 'Banco de Dados']
-        });
-        const entrada: ConsultaGradeCurricularEntrada = { cursoId: '5' };
-
-        await expect(useCase.perform(entrada)).rejects.toThrow('Curso com nome inválido');
-    });
-
-    it('deve verificar se o curso tem disciplinas obrigatórias corretamente', () => {
-        expect(useCase['verificarDisciplinaObrigatoria'](['Algoritmos', 'Estruturas de Dados'])).toBe(true);
-        expect(useCase['verificarDisciplinaObrigatoria'](['Estruturas de Dados', 'Banco de Dados'])).toBe(false);
-    });
 });

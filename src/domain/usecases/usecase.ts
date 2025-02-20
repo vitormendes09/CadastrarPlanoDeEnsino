@@ -1,12 +1,13 @@
 import { IUseCase } from '../../contracts/iusecase';
-
+import { IRepositoryFind } from '../../contracts/irepository';
+import { ICurso } from '../../domain/entities/ICurso';
 // Definindo a entrada e saída do caso de uso
 export interface ConsultaGradeCurricularEntrada {
-    cursoId: string;
+    cursoId: number;
 }
 
 export interface ConsultaGradeCurricularSaida {
-    cursoId: string;
+    cursoId: number;
     nomeCurso: string;
     disciplinas: string[];
 }
@@ -14,64 +15,41 @@ export interface ConsultaGradeCurricularSaida {
 // Implementação do caso de uso para consultar a grade curricular
 export class ConsultaGradeCurricularUseCase implements IUseCase<ConsultaGradeCurricularEntrada, ConsultaGradeCurricularSaida> {
     // Simulando um repositório de cursos
-    private cursos = [
-        {
-            cursoId: '1',
-            nomeCurso: 'Bacharelado de Sistemas de Informação',
-            disciplinas: ['Algoritmos', 'Estruturas de Dados', 'Banco de Dados']
-        },
-        {
-            cursoId: '2',
-            nomeCurso: 'Ciência da Computação',
-            disciplinas: ['Cálculo', 'Programação', 'Inteligência Artificial']
-        }
-    ];
 
-    async perform(entrada: ConsultaGradeCurricularEntrada): Promise<ConsultaGradeCurricularSaida> {
-        // Regra de negócio: Verificar se o curso existe
-        const curso = this.cursos.find(curso => curso.cursoId === entrada.cursoId);
-        if (!curso) {
-            throw new Error('Curso não encontrado');
-        }
+    private repo: IRepositoryFind<ICurso>;
 
-        // Verificar se o curso tem disciplinas cadastradas
-        if (curso.disciplinas.length === 0) {
-            throw new Error('Curso sem disciplinas cadastradas');
-        }
-
-        // Verificar se o curso tem pelo menos uma disciplina obrigatória
-        const temDisciplinaObrigatoria = this.verificarDisciplinaObrigatoria(curso.disciplinas);
-        if (!temDisciplinaObrigatoria) {
-            throw new Error('Curso sem disciplinas obrigatórias');
-        }
-
-        // Verificar se o curso está ativo (COMENTADO PARA REMOVER A FUNCIONALIDADE)
-        // const cursoAtivo = this.verificarCursoAtivo(curso.cursoId);
-        // if (!cursoAtivo) {
-        //     throw new Error('Curso inativo');
-        // }
-
-        // Verificar se o curso tem um nome válido
-        if (!curso.nomeCurso || curso.nomeCurso.trim().length === 0) {
-            throw new Error('Curso com nome inválido');
-        }
-
-        return {
-            cursoId: curso.cursoId,
-            nomeCurso: curso.nomeCurso,
-            disciplinas: curso.disciplinas
-        };
+    constructor(repo: IRepositoryFind<ICurso>) {
+        this.repo = repo;
+        console.log('ConsultarCronogramaUseCase instanciado');
     }
 
-    // Método para verificar se o curso está ativo (COMENTADO PARA REMOVER A FUNCIONALIDADE)
-    // private verificarCursoAtivo(cursoId: string): boolean {
-    //     // Simulação: Todos os cursos com ID ímpar estão ativos
-    //     return parseInt(cursoId) % 2 !== 0;
-    // }
+    async perform(entrada: ConsultaGradeCurricularEntrada): Promise<ConsultaGradeCurricularSaida> {
+        if(entrada.cursoId>50){
+            throw new Error('O id do curso não pode ser maior que 50');
+        }
 
-    // Método para verificar se o curso tem pelo menos uma disciplina obrigatória (simulação)
-    private verificarDisciplinaObrigatoria(disciplinas: string[]): boolean {
-        // Simulação: Considera que "Algoritmos" é uma disciplina obrigatória
-        return disciplinas.includes('Algoritmos');
+        let curso: ICurso | undefined;
+
+        try{
+            curso = await this.repo.findById(String(entrada.cursoId));
+
+        } catch (e){
+            throw new Error('Erro no repositório');
+        }
+
+        if(!curso){
+            throw Error ('Curso não encontrado')
+        } if(curso.disciplinas.length<5){
+            throw new Error('Curso deve ter pelo menos 5 disciplinas');
+        } else {
+            const saida: ConsultaGradeCurricularSaida = {
+                cursoId: curso.cursoId,
+                nomeCurso: curso.nomeCurso,
+                disciplinas: curso.disciplinas
+            };
+
+            return saida;
+        }
+
     }
 }
