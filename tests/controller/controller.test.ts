@@ -134,5 +134,38 @@ describe('ConsultaGradeCurricularController', () => {
             disciplinas: ['Algoritmos', 'Estruturas de Dados', 'Banco de Dados', 'Engenharia de Software', 'Redes de Computadores']
         });
     });
+
+    it('deve retornar status 500 se o cursoId na resposta não for um número', async () => {
+        const { controller, requestStub, responseFake } = makeSUT('1', 'cursoIdInvalido');
+    
+        controller['uc'] = {
+            perform: async () => ({
+                cursoId: "não é número",
+                nomeCurso: 'Nome Qualquer',
+                disciplinas: ['Algoritmos']
+            }) as any
+        };
+    
+        await controller.handle(requestStub, responseFake as any);
+        expect(responseFake.statusCodeInformado).toBe(500);
+        expect(responseFake.jsonInformado).toEqual({ error: 'Retorno do use case não é um id' });
+    });
+
+    it('deve retornar status 500 se disciplinas não for um array', async () => {
+        const { controller, requestStub, responseFake } = makeSUT('1', 'disciplinasInvalidas');
+    
+        controller['uc'] = {
+            perform: async () => ({
+                cursoId: 1,
+                nomeCurso: 'Nome Qualquer',
+                disciplinas: "não é array"
+            }) as any
+        };
+    
+        await controller.handle(requestStub, responseFake as any);
+        expect(responseFake.statusCodeInformado).toBe(500);
+        expect(responseFake.jsonInformado).toEqual({ error: 'Retorno do use case não é um id' });
+    });
+    
 });
 

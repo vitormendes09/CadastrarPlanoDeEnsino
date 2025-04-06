@@ -24,7 +24,7 @@ class RepositoryFake implements IRepositoryFind<ICurso>{
             return Promise.resolve({
                 cursoId: Number(id),
                 nomeCurso: 'Bacharelado de Sistemas de Informação',
-                disciplinas: ['Algoritmos', 'Estruturas de Dados', 'Banco de Dados', 'Engenharia de Software', 'Redes de Computadores']
+                disciplinas: ['Algoritmos', 'Estruturas de Dados']
             }as unknown as ICurso);
         } if(this.opcao === 'falta curso') {
             return Promise.resolve(undefined);
@@ -100,5 +100,18 @@ describe('ConsultarCronogramaUseCase', () => {
         expect(erro.message).toBe("Erro no repositório");
         
     });
+
+    it('deve retornar erro se o curso tiver menos de 5 disciplinas', async () => {
+        let { uc } = makeSUT('falta disciplina');
+        const entrada: ConsultaGradeCurricularEntrada = {cursoId: 2}
+        let erro: any;
+        try {
+            await uc.perform(entrada);
+        } catch (e: any) {
+            erro = e;
+        }
+        expect(erro.message).toBe("Curso deve ter pelo menos 5 disciplinas");
+    });
+    
 
 });

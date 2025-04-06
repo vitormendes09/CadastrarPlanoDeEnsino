@@ -28,20 +28,22 @@ export class ConsultarCursoRepostory implements IRepositoryFind<ICurso> {
 
 
     findById(id: string): Promise<ICurso | undefined> {
-        let result = this.bd.query("SELECT * FROM curso where id =$id;", null)
+        try {
+
+            let result = this.bd.query("SELECT * FROM curso where id =$id;", null);
 
       
-            if (!result) {
+            if (!result || result.length === 0) {
                 return Promise.resolve(undefined);
-            }
-
-            if (result.length === 0) {
-                new Error("Nenhum curso encontrado");
             }
 
             return Promise.resolve(result.shift() as unknown as ICurso)
 
-        
+        } catch (e) {
+            return Promise.resolve(undefined);
+        }
+
     }
+     
 
 }
