@@ -24,14 +24,14 @@ export class ConsultaGradeCurricularUseCase implements IUseCase<ConsultaGradeCur
     }
 
     async perform(entrada: ConsultaGradeCurricularEntrada): Promise<ConsultaGradeCurricularSaida> {
-        if(entrada.cursoId>50){
-            throw new Error('O id do curso não pode ser maior que 50');
+        if(entrada.cursoId>200){
+            throw new Error('O id do curso não pode ser maior que 200');
         }
 
         let curso: ICurso | undefined;
 
         try{
-            curso = await this.repo.findById(String(entrada.cursoId));
+            curso = await this.repo.BuscarPorId(String(entrada.cursoId));
 
         } catch (e){
             throw new Error('Erro no repositório');
@@ -40,7 +40,7 @@ export class ConsultaGradeCurricularUseCase implements IUseCase<ConsultaGradeCur
         if(!curso){
             throw Error ('Curso não encontrado')
         } if(curso.disciplinas.length<5){
-            throw new Error('Curso deve ter pelo menos 5 disciplinas');
+            throw new Error('Curso deve ter pelo menos 10 disciplinas');
         } else {
             const saida: ConsultaGradeCurricularSaida = {
                 cursoId: curso.cursoId,

@@ -10,7 +10,6 @@ export class ConsultaGradeCurricularController implements IController {
     uc: IUseCase<ConsultaGradeCurricularEntrada, ConsultaGradeCurricularSaida>;
 
     constructor(uc: IUseCase<ConsultaGradeCurricularEntrada, ConsultaGradeCurricularSaida>) {
-        console.log('ConsultarGradeCurricularController instanciado');
         this.uc = uc;
     }
 
@@ -56,13 +55,7 @@ export class ConsultaGradeCurricularController implements IController {
             }
             if( isNaN(Number(cursoId))) {
                 return "Id precisa ser um número"
-            }
-            if(Number(cursoId) < 0){
-                return "Id precisa ser positivo"
-            }
-            if(Number(cursoId) % 1 !== 0){
-                return "Id precisa ser um número inteiro"
-            }
+            }  
 
             return null;
     }

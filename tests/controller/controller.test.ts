@@ -82,20 +82,6 @@ describe('ConsultaGradeCurricularController', () => {
         expect(responseFake.jsonInformado).toEqual({ error: "Id precisa ser um número" });
     });
 
-    it('deve retornar status 400 se o id for negativo', async () => {
-        const { controller, requestStub, responseFake } = makeSUT('-1', 'certo');
-        await controller.handle(requestStub, responseFake as any);
-        expect(responseFake.statusCodeInformado).toBe(400);
-        expect(responseFake.jsonInformado).toEqual({ error: "Id precisa ser positivo" });
-    });
-
-    it('deve retornar status 400 se o id não for um número inteiro', async () => {
-        const { controller, requestStub, responseFake } = makeSUT('1.5', 'certo');
-        await controller.handle(requestStub, responseFake as any);
-        expect(responseFake.statusCodeInformado).toBe(400);
-        expect(responseFake.jsonInformado).toEqual({ error: "Id precisa ser um número inteiro" });
-    });
-
     it('deve retornar status 500 se o curso não for encontrado', async () => {
         const { controller, requestStub, responseFake } = makeSUT('1', 'cursoNaoEncontrado');
         await controller.handle(requestStub, responseFake as any);

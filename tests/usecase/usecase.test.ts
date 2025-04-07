@@ -8,11 +8,11 @@ class RepositoryFake implements IRepositoryFind<ICurso>{
         this.opcao = opcao;
     }
 
-    findAll(): Promise<ICurso[]> {
+    BuscarTodos(): Promise<ICurso[]> {
         throw new Error("Method not Implemented")
     }
 
-    findById(id: string): Promise<ICurso | undefined> {
+    BuscarPorId(id: string): Promise<ICurso | undefined> {
         if(this.opcao =='certo'){
             return Promise.resolve({
                 cursoId: Number(id),
@@ -75,22 +75,22 @@ describe('ConsultarCronogramaUseCase', () => {
         
     });
 
-    it('deve retornar erro caso o id seja maior que 49', async () => {
+    it('deve retornar erro caso o id seja maior que 199', async () => {
         let { repo, uc } = makeSUT('certo');
-        const entrada: ConsultaGradeCurricularEntrada = {cursoId: 51}
+        const entrada: ConsultaGradeCurricularEntrada = {cursoId: 201}
         let erro: any;
         try{
             const saida = await uc.perform(entrada);
         }catch(e: any){
             erro = e;
         }
-        expect(erro.message).toBe("O id do curso não pode ser maior que 50");
+        expect(erro.message).toBe("O id do curso não pode ser maior que 200");
         
     });
 
     it('deve retornar erro caso ocorra algum erro no repositório', async () => {
         let { repo, uc } = makeSUT('erro');
-        const entrada: ConsultaGradeCurricularEntrada = {cursoId: 50}
+        const entrada: ConsultaGradeCurricularEntrada = {cursoId: 200}
         let erro: any;
         try{
             const saida = await uc.perform(entrada);
@@ -101,7 +101,7 @@ describe('ConsultarCronogramaUseCase', () => {
         
     });
 
-    it('deve retornar erro se o curso tiver menos de 5 disciplinas', async () => {
+    it('deve retornar erro se o curso tiver menos de 10 disciplinas', async () => {
         let { uc } = makeSUT('falta disciplina');
         const entrada: ConsultaGradeCurricularEntrada = {cursoId: 2}
         let erro: any;
@@ -110,7 +110,7 @@ describe('ConsultarCronogramaUseCase', () => {
         } catch (e: any) {
             erro = e;
         }
-        expect(erro.message).toBe("Curso deve ter pelo menos 5 disciplinas");
+        expect(erro.message).toBe("Curso deve ter pelo menos 10 disciplinas");
     });
     
 

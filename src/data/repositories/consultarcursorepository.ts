@@ -4,15 +4,15 @@ import { ICurso } from "../../domain/entities/ICurso"
 
 export class ConsultarCursoRepostory implements IRepositoryFind<ICurso> {
 
-    bd: IBancoDeDados<ICurso>;
+    banco: IBancoDeDados<ICurso>;
 
     constructor(bd: IBancoDeDados<ICurso>) {
-        this.bd = bd;
+        this.banco = bd;
     }
 
-    findAll(): Promise<ICurso[]> {
+    BuscarTodos(): Promise<ICurso[]> {
         try {
-            let result = this.bd.query("Select * From curso;", null) as ICurso[];
+            let result = this.banco.query("Select * From curso;", null) as ICurso[];
             if (!result) {
                 new Error("Nenhum curso encontrado");
             }
@@ -21,16 +21,16 @@ export class ConsultarCursoRepostory implements IRepositoryFind<ICurso> {
 
             }
             return Promise.resolve(result)
-        } catch (e) {
+        } catch (error) {
             return Promise.resolve([]);
         }
     }
 
 
-    findById(id: string): Promise<ICurso | undefined> {
+    BuscarPorId(id: string): Promise<ICurso | undefined> {
         try {
 
-            let result = this.bd.query("SELECT * FROM curso where id =$id;", null);
+            let result = this.banco.query("SELECT * FROM curso where id =$id;", null);
 
       
             if (!result || result.length === 0) {

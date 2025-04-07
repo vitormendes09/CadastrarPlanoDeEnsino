@@ -54,7 +54,7 @@ describe('ConsultarCursoRepository', () => {
     });
     it('deve chamar o findAll', async () => {
         let { bd, repo } = makeSUT('1');
-        let saida = await repo.findAll();
+        let saida = await repo.BuscarTodos();
         expect(saida).toEqual([{
             cursoId: 1,
             nomeCurso: 'Bacharelado de Sistemas de Informação',
@@ -69,7 +69,7 @@ describe('ConsultarCursoRepository', () => {
 
     it('deve chamar o findById', async () => {
         let { bd, repo } = makeSUT('2');
-        let saida = await repo.findById("teste");
+        let saida = await repo.BuscarPorId("teste");
         expect(saida).toEqual({
             cursoId: 1,
             nomeCurso: 'Bacharelado de Sistemas de Informação',
@@ -79,37 +79,37 @@ describe('ConsultarCursoRepository', () => {
 
     it('deve chamar o findAll e receber undefined', async () => {
         let { bd, repo } = makeSUT('3');
-        let saida = await repo.findAll();
+        let saida = await repo.BuscarTodos();
         expect(saida).toEqual([]);
     });
 
     it('deve chamar o findById e receber undefined', async () => {
         let { bd, repo } = makeSUT('3');
-        let saida = await repo.findById("teste");
+        let saida = await repo.BuscarPorId("teste");
         expect(saida).toEqual(undefined);
     });
 
     it('deve chamar o findAll e receber um array vazio', async () => {
         let { bd, repo } = makeSUT('4');
-        let saida = await repo.findAll();
+        let saida = await repo.BuscarTodos();
         expect(saida).toEqual([]);
     });
 
     it('deve chamar o findById e receber um array vazio', async () => {
         let { bd, repo } = makeSUT('4');
-        let saida = await repo.findById("teste");
+        let saida = await repo.BuscarPorId("teste");
         expect(saida).toEqual(undefined);
     });
 
     it('deve chamar o findAll e receber um erro', async () => {
         let { bd, repo } = makeSUT('5');
-        let saida = await repo.findAll();
+        let saida = await repo.BuscarTodos();
         expect(saida).toEqual([]);
     });
 
     it('deve chamar o findById e receber um erro', async () => {
         let { bd, repo } = makeSUT('5');
-        let saida = await repo.findById("teste");
+        let saida = await repo.BuscarPorId("teste");
         expect(saida).toEqual(undefined);
     });
     
